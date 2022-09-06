@@ -5,7 +5,7 @@ let L = window.location.href
     .split("/questions")[0] + "/usage";
 
 let H = new Headers({
-    "Authorization": "Token xd31sYEPWvR+ZWzJlLoMMqTr2XooH2uRZ5zKHDSkRyppdEB4116XvMRUp+RC3/6h1hbRzD/la4+pK6/4WeCVxw=="
+    "Authorization": "Token " + document.cookie.split("learn_auth_token=")[1].split("%3D%3D")[0] + "=="
 });
 
 let R = await fetch(L,

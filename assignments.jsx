@@ -25,16 +25,16 @@ function correctSite() {
 async function answer() {
 	//@ts-check
 
-	correctSite()
-	console.clear();
+	correctSite();
 
 	let link = url
 		.replace("/en/assignments", "/qlearn/v1/schedule")
 		.replace("topics", "topic")
 		.split("/questions")[0] + "/contents";
 
+	let full_auth_token = "Token " + document.cookie.split("learn_auth_token=")[1].split("%3D%3D")[0] + "==";
 	let headers = new Headers({
-		"Authorization": "Token 8QvdupAhRlEdE457u8RhnvK5FKX7zjKH4gPBCKH2xHQ9paDflu5I6vMxhtn-5Eozoy-zFr4HMNCgIsnTpfcSVg=="
+		"Authorization": full_auth_token
 	});
 
 	// @ts-ignore
@@ -68,13 +68,15 @@ async function answer() {
 	// @ts-ignore
 	let ct = await response.json();
 
+	console.clear();
+	console.log("\n| url   = \"" + link + "\"");
+	console.log("| token = \"" + full_auth_token + "\"");
+	console.log("\n[" + ct.name + "]");
+
 	let qShuffled = ct.shuffle_questions;
 	if (qShuffled) {
 		console.log("%c[!] WARNING: For this specific assignment, all questions are shuffled [!]\n[Question numbers may not be accurate]", "color: #9980FF");
 	}
-
-	console.log("[" + link + "]\n\n");
-	console.log("-\n\n[" + ct.name + "]");
 
 	for (let i = 0; i < ct.number_of_questions; i++) {
 
@@ -240,7 +242,20 @@ async function answer() {
 
 				case "grouped_choices":
 					{
-						console.log("	Question type still unsupported.");
+						for (let j = 0; j < Object.keys(_q.choices).length; j++) {
+
+							let _ch = _q.choices[j];
+
+							for (let k = 0; k < Object.keys(_q.answer_categories).length; k++) {
+
+								let _cat = _q.answer_categories[k];
+
+								if (_ch.answer_category_id == _cat.id && _ch.correct) {
+									console.log("   " + clean(_cat.section.text) + " :");
+									console.log("        | " + "%c%s", "color: #9980FF", _ch.body[0].text.trim());
+								}
+							}
+						}
 					}
 					break;
 
