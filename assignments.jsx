@@ -44,7 +44,10 @@ async function answer() {
 			method: "GET"
 		});
 
+	// @ts-ignore
+	let ct = await response.json();
 	let quickMode = false;
+
 	// @ts-ignore
 	quickMode = prompt(
 		"Use quick mode?"
@@ -65,12 +68,10 @@ async function answer() {
 		+ "\n(Type y or n)"
 	).toLowerCase() == "y";
 
-	// @ts-ignore
-	let ct = await response.json();
-
 	console.clear();
 	console.log("\n| url   = \"" + link + "\"");
 	console.log("| token = \"" + full_auth_token + "\"");
+	console.log(ct);
 	console.log("\n[" + ct.name + "]");
 
 	let qShuffled = ct.shuffle_questions;
@@ -83,7 +84,12 @@ async function answer() {
 		let _q = ct.questions[i];
 
 		if (quickMode) {
-			console.log("\n", (i + 1), ":")
+			if (i + 1 == Number(window.location.href.split("questions/")[1])) {
+				console.log("\n " + (i + 1) + " : " + "%c< You ran the script here.", "color: #9980FF");
+			}
+			else {
+				console.log("\n", i + 1, ": ");
+			}
 
 			switch (_q.answer_type) {
 				case "multiple_choice":
